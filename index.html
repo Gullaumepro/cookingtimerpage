@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minuteur de Cuisine - Minuteur de Cuisson Intelligent</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXX"
+            crossorigin="anonymous"></script>
+    <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXXX">
+    
+    <!-- SEO et Meta pour AdSense -->
+    <meta name="description" content="Minuteur de cuisine intelligent avec conseils de cuisson, mode Pomodoro et minuteurs multiples. Gratuit, sans inscription.">
+    <meta name="keywords" content="minuteur cuisine, timer cuisson, pomodoro, minuteur en ligne, recettes, cuisson parfaite">
+    <meta name="author" content="Minuteur de Cuisine">
+    <meta property="og:title" content="Minuteur de Cuisine - Minuteur Intelligent Gratuit">
+    <meta property="og:description" content="Le meilleur minuteur de cuisine en ligne avec conseils experts et fonctionnalités avancées">
+    <meta property="og:type" content="website">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            color: #4A4A4A;
+            overflow-x: hidden;
+        }
+        
+        /* Éléments décoratifs organiques */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 10%;
+            right: -5%;
+            width: 200px;
+            height: 300px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150' fill='%23D4C4B0' opacity='0.3'%3E%3Cpath d='M20 10c10-5 20 0 25 10s5 20 0 30-15 15-25 10-15-20-10-30 5-15 10-20z'/%3E%3Cpath d='M60 40c8-3 16 2 20 8s3 16 0 24-12 12-20 8-12-16-8-24 4-12 8-16z'/%3E%3C/svg%3E") no-repeat;
+            z-index: -1;
+            animation: float-leaf 6s ease-in-out infinite;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 15%;
+            left: -3%;
+            width: 150px;
+            height: 200px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 120' fill='%23C8B8A8' opacity='0.25'%3E%3Cpath d='M15 15c8-4 16 1 20 8s4 16 0 24-12 12-20 8-12-16-8-24 4-12 8-16z'/%3E%3C/svg%3E") no-repeat;
+            z-index: -1;
+            animation: float-leaf 8s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float-leaf {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Horloge moderne - Design Minimaliste */
+        .modern-clock {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(180, 170, 160, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+        .timer-glow { 
+            animation: pulse-glow 3s ease-in-out infinite alternate;
+            color: #4A4A4A !important;
+            font-family: 'Playfair Display', serif;
+        }
+        @keyframes pulse-glow {
+            from { 
+                transform: scale(1);
+                color: #4A4A4A;
+            }
+            to { 
+                transform: scale(1.01);
+                color: #5A5A5A;
+            }
+        }
+        .timer-finished {
+            animation: flash-alert 1s ease-in-out infinite;
+        }
+        @keyframes flash-alert {
+            0%, 100% { 
+                color: rgb(239, 68, 68);
+                text-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+            }
+            50% { 
+                color: rgb(220, 38, 38);
+                text-shadow: 0 0 50px rgba(220, 38, 38, 1);
+            }
+        }
+        
+        /* Barre de progression moderne - Minimaliste */
+        .progress-bar-container {
+            background: rgba(220, 215, 210, 0.4);
+            border: 1px solid rgba(190, 185, 180, 0.3);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #B4A494, #A69688, #98877A);
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .progress-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        /* Cercle de progression amélioré - Café Latte */
+        .progress-ring {
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 0 15px rgba(205, 133, 63, 0.5));
+        }
+        .progress-ring-circle {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Autres styles */
+        .btn-gradient {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A4A4A;
+            border: 1px solid rgba(180, 170, 160, 0.4);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .btn-gradient:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Styles boutons ovales comme dans la charte */
+        .oval-btn {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(180, 170, 160, 0.3);
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: #4A4A4A;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        .oval-btn:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+        .oval-btn:active {
+            transform: translateY(0px);
+        }
+        
+        /* Timer cards individuelles */
+        .timer-card-individual {
+            position: relative;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .timer-card-individual:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Dual timer specific styles */
+        .dual-timer-container {
+            transition: all 0.3s ease;
+        }
+        
+        .dual-timer-container:hover {
+            transform: scale(1.01);
+        }
+        
+        @media (max-width: 1024px) {
+            .dual-timer-container {
+                margin-bottom: 2rem;
+            }
+        }
+        
+        /* Style spécial pour les boutons Start colorés */
+        .oval-btn.bg-green-500 {
+            background: #10b981;
+            border-color: #059669;
+            color: white;
+        }
+        .oval-btn.bg-green-500:hover {
+            background: #059669;
+        }
+        
+        .oval-btn.bg-yellow-500 {
+            background: #f59e0b;
+            border-color: #d97706;
+            color: white;
+        }
+        .oval-btn.bg-yellow-500:hover {
+            background: #d97706;
+        }
+        
+        /* Animation de particules pour l'horloge */
+        .clock-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.8), transparent);
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+        
+        /* Animation de pulsation pour l'urgence */
+        @keyframes pulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.05); filter: brightness(1.2); }
+        }
+        
+        /* Amélioration du responsive */
+        @media (max-width: 768px) {
+            .modern-clock {
+                width: 280px;
+                height: 280px;
+            }
+            #timerDisplay {
+                font-size: 3rem;
+            }
+        }
+        
+        /* Styles pour les modes - Design Minimaliste */
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.7);
+            color: #6B6B6B;
+            border: 1px solid rgba(180, 170, 160, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+        }
+        .mode-btn.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A4A4A;
+            border: 1px solid rgba(160, 150, 140, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .mode-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.8);
+            color: #4A4A4A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .settings-btn {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .settings-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        /* Styles pour les préréglages rapides */
+        .quick-preset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Styles pour le slider de volume */
+        .slider {
+            appearance: none;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        
+        /* Styles pour les cartes de minuteur multiple */
+        .timer-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .timer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .timer-card.running {
+            border-color: rgba(34, 197, 94, 0.5);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+        .timer-card.finished {
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+            animation: flash-card 1s ease-in-out infinite;
+        }
+        @keyframes flash-card {
+            0%, 100% { background: rgba(255,255,255,0.1); }
+            50% { background: rgba(239, 68, 68, 0.2); }
+        }
+        
+        /* Animation pour le temps dépassé */
+        .overtime {
+            color: #ef4444 !important;
+            animation: flash-red 1s ease-in-out infinite;
+        }
+        @keyframes flash-red {
+            0%, 100% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+            50% { color: #dc2626; text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+        }
+        
+        /* Styles pour les publicités */
+        .ad-container {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .ad-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        /* Responsive ads */
+        .adsbygoogle {
+            display: block !important;
+            text-align: center;
+        }
+        
+        /* Mobile ad adjustments */
+        @media (max-width: 768px) {
+            .adsbygoogle[data-ad-format="horizontal"] {
+                width: 320px !important;
+                height: 50px !important;
+            }
+        }
+        
+        /* Ad loading animation */
+        .adsbygoogle:empty::before {
+            content: "Chargement de la publicité...";
+            display: block;
+            padding: 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.875rem;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen" style="background: linear-gradient(135deg, #F5F1EB 0%, #EDE7E0 50%, #E8E0D6 100%); position: relative;">
+    <!-- Header -->
+    <header class="text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl serif-title font-bold text-gray-700 mb-4 leading-tight">
+                    Minuteur de<br>Cuisine
+                </h1>
+                <p class="text-lg text-gray-600 mt-4 font-light">Minuteur intelligent pour vos cuissons parfaites</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Zone d'Alertes Contextuelles de Cuisson -->
+    <div id="alertZone" class="fixed top-0 left-0 right-0 z-40 transform -translate-y-full transition-transform duration-300">
+        <div class="container mx-auto px-4 py-3">
+            <div id="alertContent" class="max-w-4xl mx-auto bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-4 rounded-b-2xl shadow-2xl border-4 border-white/20">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div id="alertIcon" class="text-3xl animate-pulse">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div>
+                            <div id="alertTitle" class="font-bold text-lg">ALERTE CUISSON</div>
+                            <div id="alertMessage" class="text-sm opacity-90">Message d'alerte ici</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div id="alertTimer" class="font-mono text-xl font-bold bg-white/20 px-3 py-1 rounded-lg">
+                            05:00
+                        </div>
+                        <button id="dismissAlert" class="text-white/80 hover:text-white text-2xl">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Banner Ad -->
+    <div class="container mx-auto px-4 py-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/20 text-center"
+                <!-- AdSense Bannière Horizontale 728x90 -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:728px;height:90px"
+                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="horizontal"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
+                <!-- Fallback pour mobile -->
+                <div class="md:hidden">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                         data-ad-slot="XXXXXXXXXX"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Timer Section -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Mode Selection -->
+            <div class="backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-gray-200/30 mb-6" style="background: rgba(255, 255, 255, 0.85);"
+                <div class="flex justify-center items-center gap-6 mb-6">
+                    <!-- 3 boutons principaux centrés -->
+                    <button id="modeClassic" class="mode-btn active px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-clock mr-3 text-xl"></i>Minuteur Classique
+                    </button>
+                    <button id="modeDual" class="mode-btn px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-columns mr-3 text-xl"></i>Double Minuteur
+                    </button>
+                    <button id="modePomodoro" class="mode-btn px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-brain mr-3 text-xl"></i>Pomodoro
+                    </button>
+                </div>
+                
+                <!-- Bouton paramètres séparé et discret -->
+                <div class="flex justify-center mb-4">
+                    <button id="settingsBtn" class="settings-btn px-6 py-2 rounded-xl font-medium transition-all duration-200 text-sm opacity-70 hover:opacity-100">
+                        <i class="fas fa-cog mr-2"></i>Paramètres
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings Panel (Hidden by default) -->
+            <div id="settingsPanel" class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/20 mb-6 hidden">
+                <h3 class="text-white font-bold text-xl mb-4 flex items-center">
+                    <i class="fas fa-cog mr-3"></i>Paramètres
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Sonnerie -->
+                    <div>
+                        <label class="block text-white text-sm font-medium mb-2">Durée de sonnerie</label>
+                        <select id="alarmDuration" class="w-full p-3 rounded-xl bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="2">2 secondes</option>
+                            <option value="5" selected>5 secondes</option>
+                            <option value="10">10 secondes</option>
+                            <option value="15">15 secondes</option>
+                            <option value="-1">Continue (∞)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Volume -->
+                    <div>
+                        <label class="block text-white text-sm font-medium mb-2">Volume</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="range" id="volumeSlider" min="0" max="100" value="70" class="flex-1 h-2 bg-white/20 rounded-lg appearance-none slider">
+                            <span id="volumeValue" class="text-white text-sm font-medium w-10">70%</span>
+                            <button id="testSoundBtn" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex items-end space-x-2">
+                        <button id="stopAlarmBtn" class="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium hidden">
+                            <i class="fas fa-stop mr-2"></i>Arrêter Sonnerie
+                        </button>
+                        <button id="resetSettingsBtn" class="px-4 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classic Timer Mode -->
+            <div id="classicMode" class="timer-mode">
+                <!-- Timer Card -->
+                <div class="backdrop-blur-lg rounded-3xl p-8 shadow-lg border border-gray-200/30 mb-8" style="background: rgba(255, 255, 255, 0.85);"
+                <!-- Cooking Selection -->
+                <div class="mb-8">
+                    <label class="block text-gray-700 text-lg font-medium mb-4">
+                        <i class="fas fa-utensils mr-2 text-gray-600"></i>Type de cuisson
+                    </label>
+                    <select id="cookingType" class="w-full p-4 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-gray-400 appearance-none cursor-pointer backdrop-filter backdrop-blur-sm">
+                        <option value="custom">⏱️ Temps personnalisé</option>
+                        
+                        <optgroup label="🥚 Œufs - Toutes cuissons">
+                            <option value="egg-soft">Œuf à la coque (3 min)</option>
+                            <option value="egg-medium">Œuf mollet (6 min)</option>
+                            <option value="egg-hard">Œuf dur (10 min)</option>
+                            <option value="egg-scrambled">Œufs brouillés (4-5 min)</option>
+                            <option value="egg-poached">Œuf poché (3-4 min)</option>
+                            <option value="egg-fried">Œuf au plat (2-3 min)</option>
+                            <option value="omelette-plain">Omelette nature (3-4 min)</option>
+                            <option value="omelette-filled">Omelette garnie (5-6 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🍝 Pâtes - Toutes variétés">
+                            <option value="pasta-fresh">Pâtes fraîches (2-3 min)</option>
+                            <option value="pasta-regular">Pâtes classiques (8-10 min)</option>
+                            <option value="pasta-whole">Pâtes complètes (12-15 min)</option>
+                            <option value="pasta-spaghetti">Spaghetti (10-12 min)</option>
+                            <option value="pasta-penne">Penne (11-13 min)</option>
+                            <option value="pasta-fusilli">Fusilli (10-12 min)</option>
+                            <option value="pasta-farfalle">Farfalle (10-12 min)</option>
+                            <option value="pasta-tagliatelle">Tagliatelle (8-10 min)</option>
+                            <option value="pasta-linguine">Linguine (9-11 min)</option>
+                            <option value="pasta-ravioli">Raviolis frais (4-6 min)</option>
+                            <option value="pasta-lasagna">Plaques lasagne (8-10 min)</option>
+                            <option value="pasta-gnocchi">Gnocchis (2-3 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🍚 Riz et Céréales">
+                            <option value="rice-white">Riz blanc (15 min)</option>
+                            <option value="rice-brown">Riz complet (25 min)</option>
+                            <option value="rice-basmati">Riz basmati (12 min)</option>
+                            <option value="rice-jasmine">Riz jasmine (15 min)</option>
+                            <option value="rice-arborio">Riz arborio (18 min)</option>
+                            <option value="rice-wild">Riz sauvage (45 min)</option>
+                            <option value="rice-sticky">Riz gluant (20 min)</option>
+                            <option value="quinoa">Quinoa (15 min)</option>
+                            <option value="bulgur">Boulgour (12 min)</option>
+                            <option value="couscous">Couscous (5 min)</option>
+                            <option value="barley">Orge perlé (30 min)</option>
+                            <option value="polenta">Polenta (15 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🥬 Légumes - Cuisson vapeur">
+                            <option value="broccoli-steam">Brocolis vapeur (5-6 min)</option>
+                            <option value="cauliflower-steam">Chou-fleur vapeur (6-8 min)</option>
+                            <option value="carrots-steam">Carottes vapeur (8-10 min)</option>
+                            <option value="green-beans-steam">Haricots verts vapeur (6-8 min)</option>
+                            <option value="asparagus-steam">Asperges vapeur (4-6 min)</option>
+                            <option value="spinach-steam">Épinards vapeur (2-3 min)</option>
+                            <option value="zucchini-steam">Courgettes vapeur (4-5 min)</option>
+                            <option value="brussels-steam">Choux de Bruxelles vapeur (8-10 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🥕 Légumes - Cuisson eau">
+                            <option value="potatoes">Pommes de terre (20-25 min)</option>
+                            <option value="sweet-potatoes">Patates douces (15-20 min)</option>
+                            <option value="carrots-boiled">Carottes bouillies (10-12 min)</option>
+                            <option value="turnips">Navets (15-18 min)</option>
+                            <option value="beetroot">Betteraves (30-40 min)</option>
+                            <option value="artichoke">Artichauts (25-30 min)</option>
+                            <option value="leeks">Poireaux (12-15 min)</option>
+                            <option value="corn">Maïs (8-10 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🥩 Viandes rouges">
+                            <option value="steak-rare">Steak saignant (2-3 min/face)</option>
+                            <option value="steak-medium">Steak à point (4-5 min/face)</option>
+                            <option value="steak-well">Steak bien cuit (5-6 min/face)</option>
+                            <option value="beef-roast">Rôti de bœuf (20 min/500g)</option>
+                            <option value="beef-stew">Bœuf bourguignon (2h)</option>
+                            <option value="lamb-chops">Côtelettes d'agneau (3-4 min/face)</option>
+                            <option value="lamb-leg">Gigot d'agneau (15 min/500g)</option>
+                            <option value="pork-chops">Côtes de porc (6-8 min/face)</option>
+                            <option value="pork-tenderloin">Filet de porc (15-20 min)</option>
+                            <option value="veal-escalope">Escalope de veau (3-4 min/face)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🍗 Volailles">
+                            <option value="chicken-breast">Escalope de poulet (6-8 min/face)</option>
+                            <option value="chicken-thigh">Cuisses de poulet (25-30 min)</option>
+                            <option value="chicken-whole">Poulet entier (20 min/500g)</option>
+                            <option value="chicken-wings">Ailes de poulet (20-25 min)</option>
+                            <option value="duck-breast">Magret de canard (8-10 min/face)</option>
+                            <option value="turkey-breast">Escalope de dinde (5-7 min/face)</option>
+                            <option value="quail">Cailles (15-20 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🐟 Poissons et fruits de mer">
+                            <option value="fish-fillet">Filet de poisson (3-4 min/face)</option>
+                            <option value="salmon-fillet">Filet de saumon (4-5 min/face)</option>
+                            <option value="tuna-steak">Pavé de thon (2-3 min/face)</option>
+                            <option value="cod-fillet">Filet de cabillaud (5-6 min/face)</option>
+                            <option value="sea-bass">Bar entier (12-15 min/face)</option>
+                            <option value="trout">Truite entière (8-10 min/face)</option>
+                            <option value="shrimp">Crevettes (2-3 min)</option>
+                            <option value="scallops">Saint-Jacques (1-2 min/face)</option>
+                            <option value="mussels">Moules (5-8 min)</option>
+                            <option value="lobster">Homard (8-10 min/500g)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🍰 Pâtisseries et desserts">
+                            <option value="chocolate-fondant">Fondant chocolat (12 min)</option>
+                            <option value="creme-brulee">Crème brûlée (40 min)</option>
+                            <option value="cake-vanilla">Gâteau vanille (25 min)</option>
+                            <option value="chocolate-cake">Gâteau au chocolat (30 min)</option>
+                            <option value="muffins">Muffins (18-20 min)</option>
+                            <option value="cookies">Cookies (10-12 min)</option>
+                            <option value="madeleines">Madeleines (8-10 min)</option>
+                            <option value="tarte-tatin">Tarte tatin (25-30 min)</option>
+                            <option value="soufflé">Soufflé (15-18 min)</option>
+                            <option value="crème-caramel">Crème caramel (45 min)</option>
+                            <option value="bread-pudding">Pain perdu (20-25 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🍞 Pains et viennoiseries">
+                            <option value="bread-baking">Pain maison (30-35 min)</option>
+                            <option value="baguette">Baguette (20-25 min)</option>
+                            <option value="croissants">Croissants (15-18 min)</option>
+                            <option value="brioche">Brioche (25-30 min)</option>
+                            <option value="focaccia">Focaccia (20-25 min)</option>
+                            <option value="pizza-dough">Pâte à pizza (10-12 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="🍲 Plats mijotés">
+                            <option value="pot-au-feu">Pot-au-feu (2h30)</option>
+                            <option value="beef-stew">Bœuf bourguignon (2h)</option>
+                            <option value="chicken-stew">Coq au vin (1h30)</option>
+                            <option value="ratatouille">Ratatouille (45 min)</option>
+                            <option value="cassoulet">Cassoulet (2h)</option>
+                            <option value="bouillabaisse">Bouillabaisse (30 min)</option>
+                            <option value="chili">Chili con carne (1h)</option>
+                            <option value="curry">Curry (30-40 min)</option>
+                        </optgroup>
+                        
+                        <optgroup label="☕ Boissons chaudes">
+                            <option value="tea-green">Thé vert (2-3 min)</option>
+                            <option value="tea-black">Thé noir (4-5 min)</option>
+                            <option value="tea-herbal">Tisane (5-7 min)</option>
+                            <option value="coffee-french">Café à la française (4 min)</option>
+                            <option value="espresso">Espresso (25-30 sec)</option>
+                            <option value="hot-chocolate">Chocolat chaud (5 min)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Time Input -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div>
+                        <label class="block text-gray-600 text-sm font-medium mb-2">Minutes</label>
+                        <input type="number" id="minutes" min="0" max="59" value="5" class="w-full p-3 rounded-xl bg-white/70 text-gray-700 text-center text-xl font-semibold border border-gray-300/40 focus:outline-none focus:ring-2 focus:ring-gray-400 backdrop-filter backdrop-blur-sm">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 text-sm font-medium mb-2">Secondes</label>
+                        <input type="number" id="seconds" min="0" max="59" value="0" class="w-full p-3 rounded-xl bg-white/70 text-gray-700 text-center text-xl font-semibold border border-gray-300/40 focus:outline-none focus:ring-2 focus:ring-gray-400 backdrop-filter backdrop-blur-sm">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="setTimer" class="w-full btn-gradient text-white font-bold py-3 px-6 rounded-xl hover:scale-105 transition-all duration-200 shadow-lg">
+                            <i class="fas fa-check mr-2"></i>Définir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Timer Cards Layout - Vertical Stack -->
+                <div class="space-y-6 max-w-sm mx-auto">
+                    <!-- Main Timer Card -->
+                    <div class="timer-card-individual backdrop-blur-lg rounded-3xl p-8 shadow-lg border border-gray-200/30 text-center" style="background: rgba(255, 255, 255, 0.85);">
+                        <!-- Category with icon -->
+                        <div class="flex items-center justify-center mb-4">
+                            <i class="fas fa-utensils text-amber-600 text-lg mr-2"></i>
+                            <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide" id="currentCategory">CUISSON</h3>
+                            <button class="ml-2 text-xs text-gray-400 hover:text-gray-600" id="changeCategoryBtn" title="Changer le type">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Timer Display -->
+                        <div id="timerDisplay" class="text-7xl serif-title font-bold text-gray-700 timer-glow mb-6 tracking-wide">
+                            05:00
+                        </div>
+                        
+                        <!-- Progress bar -->
+                        <div class="mb-6">
+                            <div class="progress-bar-container h-3 rounded-full overflow-hidden">
+                                <div id="progressBar" class="progress-bar h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Control Button -->
+                        <div class="space-y-3">
+                            <button id="startBtn" class="oval-btn w-32 bg-green-500 hover:bg-green-600 text-white border-green-400">Start</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Secondary Timer Card (if needed) -->
+                    <div id="secondaryTimerCard" class="timer-card-individual backdrop-blur-lg rounded-3xl p-8 shadow-lg border border-gray-200/30 text-center hidden" style="background: rgba(255, 255, 255, 0.85);">
+                        <div class="flex items-center justify-center mb-4">
+                            <i class="fas fa-seedling text-green-600 text-lg mr-2"></i>
+                            <h3 class="text-gray-600 font-medium text-sm uppercase tracking-wide">LÉGUMES</h3>
+                        </div>
+                        
+                        <div class="text-7xl serif-title font-bold text-gray-700 mb-6 tracking-wide">
+                            05:45
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="progress-bar-container h-3 rounded-full overflow-hidden">
+                                <div class="progress-bar h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <button class="oval-btn w-32 bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-400">Pause</button>
+                        </div>
+                    </div>
+    
+                    <!-- Secondary actions -->
+                    <div class="flex justify-center space-x-4 mt-6">
+                        <button id="pauseBtn" class="oval-btn w-28 bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-400 opacity-50" disabled>Pause</button>
+                        <button id="resetBtn" class="oval-btn w-28">Reset</button>
+                    </div>
+                    
+                    <!-- Quick add second timer -->
+                    <div class="text-center mt-4">
+                        <button id="addSecondTimerBtn" class="text-gray-500 hover:text-gray-700 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Ajouter un second minuteur
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cooking Tips Section -->
+                <div id="cookingTips" class="backdrop-blur-sm rounded-2xl p-6 mb-6 border border-gray-200/30" style="background: rgba(255, 255, 255, 0.7);">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-lightbulb text-amber-600 text-xl mr-3"></i>
+                        <h3 class="text-gray-700 font-semibold text-lg serif-title">Conseils de Cuisson</h3>
+                    </div>
+                    
+                    <div id="cookingAdvice" class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-green-400 mt-1 flex-shrink-0"></i>
+                            <p class="text-white/80 text-sm leading-relaxed">
+                                Sélectionnez un type de cuisson pour obtenir des conseils personnalisés
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Intermediate Steps -->
+                    <div id="intermediateSteps" class="mt-4 space-y-2 hidden">
+                        <h4 class="text-white/90 font-medium text-sm mb-2">
+                            <i class="fas fa-list-check mr-2"></i>Étapes intermédiaires
+                        </h4>
+                        <div id="stepsList" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Status Display -->
+                <div id="statusDisplay" class="text-center">
+                    <p class="text-white/80 text-lg">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span id="statusText">Prêt à démarrer</span>
+                    </p>
+                </div>
+            </div>
+
+                <!-- Quick Presets -->
+                <div class="mb-6">
+                    <h4 class="text-gray-700 font-medium text-lg mb-4 flex items-center serif-title">
+                        <i class="fas fa-bolt mr-2 text-amber-600"></i>Préréglages Rapides
+                    </h4>
+                    <div class="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2">
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="30">30s</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="45">45s</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="60">1m</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="90">1m30</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="120">2m</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="180">3m</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="300">5m</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="600">10m</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="900">15m</button>
+                        <button class="quick-preset px-3 py-2 bg-white/60 hover:bg-white/80 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200/40" data-time="1200">20m</button>
+                    </div>
+                </div>
+                
+                <!-- Sidebar Ad -->
+                <div class="mb-6">
+                    <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 text-center">
+                        <p class="text-white/60 text-xs mb-2">Publicité</p>
+                        <!-- AdSense Rectangle Moyen 300x250 -->
+                        <ins class="adsbygoogle"
+                             style="display:inline-block;width:300px;height:250px"
+                             data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                             data-ad-slot="XXXXXXXXXX"></ins>
+                        <script>
+                             (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+                </div>
+                
+                <!-- Cooking Quick Actions -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <button class="quick-timer bg-white/10 backdrop-blur-sm p-4 rounded-xl text-white hover:bg-white/20 transition-all duration-200 border border-white/20" data-time="180">
+                        <i class="fas fa-egg text-2xl mb-2 block text-yellow-400"></i>
+                        <span class="block font-semibold">Œuf coque</span>
+                        <span class="text-sm opacity-80">3 min</span>
+                    </button>
+                    <button class="quick-timer bg-white/10 backdrop-blur-sm p-4 rounded-xl text-white hover:bg-white/20 transition-all duration-200 border border-white/20" data-time="600">
+                        <i class="fas fa-bowl-food text-2xl mb-2 block text-orange-400"></i>
+                        <span class="block font-semibold">Pâtes</span>
+                        <span class="text-sm opacity-80">10 min</span>
+                    </button>
+                    <button class="quick-timer bg-white/10 backdrop-blur-sm p-4 rounded-xl text-white hover:bg-white/20 transition-all duration-200 border border-white/20" data-time="900">
+                        <i class="fas fa-seedling text-2xl mb-2 block text-green-400"></i>
+                        <span class="block font-semibold">Légumes</span>
+                        <span class="text-sm opacity-80">15 min</span>
+                    </button>
+                    <button class="quick-timer bg-white/10 backdrop-blur-sm p-4 rounded-xl text-white hover:bg-white/20 transition-all duration-200 border border-white/20" data-time="1200">
+                        <i class="fas fa-drumstick-bite text-2xl mb-2 block text-red-400"></i>
+                        <span class="block font-semibold">Viande</span>
+                        <span class="text-sm opacity-80">20 min</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pomodoro Mode -->
+            <!-- Dual Timer Mode -->
+            <div id="dualMode" class="timer-mode hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                    <!-- Timer 1 -->
+                    <div class="dual-timer-container">
+                        <div class="backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-gray-200/30 mb-6" style="background: rgba(255, 255, 255, 0.85);">
+                            <h3 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-utensils mr-2 text-amber-600"></i>
+                                Minuteur 1
+                            </h3>
+                            
+                            <!-- Cooking Selection Timer 1 -->
+                            <div class="mb-6">
+                                <label class="block text-gray-700 text-sm font-medium mb-3">Type de cuisson</label>
+                                <select id="cookingType1" class="w-full p-3 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm">
+                                    <option value="custom">⏱️ Temps personnalisé</option>
+                                    
+                                    <optgroup label="🥚 Œufs - Toutes cuissons">
+                                        <option value="egg-soft">Œuf à la coque (3 min)</option>
+                                        <option value="egg-medium">Œuf mollet (6 min)</option>
+                                        <option value="egg-hard">Œuf dur (10 min)</option>
+                                        <option value="egg-scrambled">Œufs brouillés (4-5 min)</option>
+                                        <option value="egg-poached">Œuf poché (3-4 min)</option>
+                                        <option value="egg-fried">Œuf au plat (2-3 min)</option>
+                                        <option value="omelette-plain">Omelette nature (3-4 min)</option>
+                                        <option value="omelette-filled">Omelette garnie (5-6 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍝 Pâtes - Toutes variétés">
+                                        <option value="pasta-fresh">Pâtes fraîches (2-3 min)</option>
+                                        <option value="pasta-regular">Pâtes classiques (8-10 min)</option>
+                                        <option value="pasta-whole">Pâtes complètes (12-15 min)</option>
+                                        <option value="pasta-spaghetti">Spaghetti (10-12 min)</option>
+                                        <option value="pasta-penne">Penne (11-13 min)</option>
+                                        <option value="pasta-fusilli">Fusilli (10-12 min)</option>
+                                        <option value="pasta-farfalle">Farfalle (10-12 min)</option>
+                                        <option value="pasta-tagliatelle">Tagliatelle (8-10 min)</option>
+                                        <option value="pasta-linguine">Linguine (9-11 min)</option>
+                                        <option value="pasta-ravioli">Raviolis frais (4-6 min)</option>
+                                        <option value="pasta-lasagna">Plaques lasagne (8-10 min)</option>
+                                        <option value="pasta-gnocchi">Gnocchis (2-3 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍚 Riz et Céréales">
+                                        <option value="rice-white">Riz blanc (15 min)</option>
+                                        <option value="rice-brown">Riz complet (25 min)</option>
+                                        <option value="rice-basmati">Riz basmati (12 min)</option>
+                                        <option value="rice-jasmine">Riz jasmine (15 min)</option>
+                                        <option value="rice-arborio">Riz arborio (18 min)</option>
+                                        <option value="rice-wild">Riz sauvage (45 min)</option>
+                                        <option value="rice-sticky">Riz gluant (20 min)</option>
+                                        <option value="quinoa">Quinoa (15 min)</option>
+                                        <option value="bulgur">Boulgour (12 min)</option>
+                                        <option value="couscous">Couscous (5 min)</option>
+                                        <option value="barley">Orge perlé (30 min)</option>
+                                        <option value="polenta">Polenta (15 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🥬 Légumes - Cuisson vapeur">
+                                        <option value="broccoli-steam">Brocolis vapeur (5-6 min)</option>
+                                        <option value="cauliflower-steam">Chou-fleur vapeur (6-8 min)</option>
+                                        <option value="carrots-steam">Carottes vapeur (8-10 min)</option>
+                                        <option value="green-beans-steam">Haricots verts vapeur (6-8 min)</option>
+                                        <option value="asparagus-steam">Asperges vapeur (4-6 min)</option>
+                                        <option value="spinach-steam">Épinards vapeur (2-3 min)</option>
+                                        <option value="zucchini-steam">Courgettes vapeur (4-5 min)</option>
+                                        <option value="brussels-steam">Choux de Bruxelles vapeur (8-10 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🥕 Légumes - Cuisson eau">
+                                        <option value="potatoes">Pommes de terre (20-25 min)</option>
+                                        <option value="sweet-potatoes">Patates douces (15-20 min)</option>
+                                        <option value="carrots-boiled">Carottes bouillies (10-12 min)</option>
+                                        <option value="turnips">Navets (15-18 min)</option>
+                                        <option value="beetroot">Betteraves (30-40 min)</option>
+                                        <option value="artichoke">Artichauts (25-30 min)</option>
+                                        <option value="leeks">Poireaux (12-15 min)</option>
+                                        <option value="corn">Maïs (8-10 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🥩 Viandes rouges">
+                                        <option value="steak-rare">Steak saignant (2-3 min/face)</option>
+                                        <option value="steak-medium">Steak à point (4-5 min/face)</option>
+                                        <option value="steak-well">Steak bien cuit (5-6 min/face)</option>
+                                        <option value="beef-roast">Rôti de bœuf (20 min/500g)</option>
+                                        <option value="beef-stew">Bœuf bourguignon (2h)</option>
+                                        <option value="lamb-chops">Côtelettes d'agneau (3-4 min/face)</option>
+                                        <option value="lamb-leg">Gigot d'agneau (15 min/500g)</option>
+                                        <option value="pork-chops">Côtes de porc (6-8 min/face)</option>
+                                        <option value="pork-tenderloin">Filet de porc (15-20 min)</option>
+                                        <option value="veal-escalope">Escalope de veau (3-4 min/face)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍗 Volailles">
+                                        <option value="chicken-breast">Escalope de poulet (6-8 min/face)</option>
+                                        <option value="chicken-thigh">Cuisses de poulet (25-30 min)</option>
+                                        <option value="chicken-whole">Poulet entier (20 min/500g)</option>
+                                        <option value="chicken-wings">Ailes de poulet (20-25 min)</option>
+                                        <option value="duck-breast">Magret de canard (8-10 min/face)</option>
+                                        <option value="turkey-breast">Escalope de dinde (5-7 min/face)</option>
+                                        <option value="quail">Cailles (15-20 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🐟 Poissons et fruits de mer">
+                                        <option value="fish-fillet">Filet de poisson (3-4 min/face)</option>
+                                        <option value="salmon-fillet">Filet de saumon (4-5 min/face)</option>
+                                        <option value="tuna-steak">Pavé de thon (2-3 min/face)</option>
+                                        <option value="cod-fillet">Filet de cabillaud (5-6 min/face)</option>
+                                        <option value="sea-bass">Bar entier (12-15 min/face)</option>
+                                        <option value="trout">Truite entière (8-10 min/face)</option>
+                                        <option value="shrimp">Crevettes (2-3 min)</option>
+                                        <option value="scallops">Saint-Jacques (1-2 min/face)</option>
+                                        <option value="mussels">Moules (5-8 min)</option>
+                                        <option value="lobster">Homard (8-10 min/500g)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍰 Pâtisseries et desserts">
+                                        <option value="chocolate-fondant">Fondant chocolat (12 min)</option>
+                                        <option value="creme-brulee">Crème brûlée (40 min)</option>
+                                        <option value="cake-vanilla">Gâteau vanille (25 min)</option>
+                                        <option value="chocolate-cake">Gâteau au chocolat (30 min)</option>
+                                        <option value="muffins">Muffins (18-20 min)</option>
+                                        <option value="cookies">Cookies (10-12 min)</option>
+                                        <option value="madeleines">Madeleines (8-10 min)</option>
+                                        <option value="tarte-tatin">Tarte tatin (25-30 min)</option>
+                                        <option value="soufflé">Soufflé (15-18 min)</option>
+                                        <option value="crème-caramel">Crème caramel (45 min)</option>
+                                        <option value="bread-pudding">Pain perdu (20-25 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍞 Pains et viennoiseries">
+                                        <option value="bread-baking">Pain maison (30-35 min)</option>
+                                        <option value="baguette">Baguette (20-25 min)</option>
+                                        <option value="croissants">Croissants (15-18 min)</option>
+                                        <option value="brioche">Brioche (25-30 min)</option>
+                                        <option value="focaccia">Focaccia (20-25 min)</option>
+                                        <option value="pizza-dough">Pâte à pizza (10-12 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍲 Plats mijotés">
+                                        <option value="pot-au-feu">Pot-au-feu (2h30)</option>
+                                        <option value="beef-stew">Bœuf bourguignon (2h)</option>
+                                        <option value="chicken-stew">Coq au vin (1h30)</option>
+                                        <option value="ratatouille">Ratatouille (45 min)</option>
+                                        <option value="cassoulet">Cassoulet (2h)</option>
+                                        <option value="bouillabaisse">Bouillabaisse (30 min)</option>
+                                        <option value="chili">Chili con carne (1h)</option>
+                                        <option value="curry">Curry (30-40 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="☕ Boissons chaudes">
+                                        <option value="tea-green">Thé vert (2-3 min)</option>
+                                        <option value="tea-black">Thé noir (4-5 min)</option>
+                                        <option value="tea-herbal">Tisane (5-7 min)</option>
+                                        <option value="coffee-french">Café à la française (4 min)</option>
+                                        <option value="espresso">Espresso (25-30 sec)</option>
+                                        <option value="hot-chocolate">Chocolat chaud (5 min)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            
+                            <!-- Manual Time Setting Timer 1 -->
+                            <div class="mb-6">
+                                <label class="block text-gray-700 text-sm font-medium mb-3">Temps personnalisé</label>
+                                <div class="flex space-x-4">
+                                    <div class="flex-1">
+                                        <input type="number" id="minutes1" min="0" max="99" value="5" class="w-full p-3 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-center font-mono text-lg">
+                                        <label class="block text-xs text-gray-500 text-center mt-1">Minutes</label>
+                                    </div>
+                                    <div class="flex-1">
+                                        <input type="number" id="seconds1" min="0" max="59" value="0" class="w-full p-3 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-center font-mono text-lg">
+                                        <label class="block text-xs text-gray-500 text-center mt-1">Secondes</label>
+                                    </div>
+                                    <button id="setTimer1" class="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timer Display Card 1 -->
+                        <div class="timer-card-individual backdrop-blur-lg rounded-3xl p-8 shadow-lg border border-gray-200/30 text-center" style="background: rgba(255, 255, 255, 0.85);">
+                            <div class="flex items-center justify-center mb-4">
+                                <i id="timerIcon1" class="fas fa-utensils text-amber-600 text-lg mr-2"></i>
+                                <h3 id="currentCategory1" class="text-gray-600 font-medium text-sm uppercase tracking-wide">CUISSON 1</h3>
+                            </div>
+                            
+                            <div id="timerDisplay1" class="text-6xl serif-title font-bold text-gray-700 timer-glow mb-6 tracking-wide">05:00</div>
+                            
+                            <!-- Progress bar 1 -->
+                            <div class="mb-6">
+                                <div class="progress-bar-container h-3 rounded-full overflow-hidden">
+                                    <div id="progressBar1" class="progress-bar h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Controls 1 -->
+                            <div class="flex justify-center space-x-3">
+                                <button id="startBtn1" class="oval-btn bg-green-500 hover:bg-green-600 text-white border-green-400 px-6 py-2">
+                                    <i class="fas fa-play mr-1"></i>Start
+                                </button>
+                                <button id="pauseBtn1" class="oval-btn bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-400 px-6 py-2" disabled>
+                                    <i class="fas fa-pause mr-1"></i>Pause
+                                </button>
+                                <button id="resetBtn1" class="oval-btn bg-gray-500 hover:bg-gray-600 text-white border-gray-400 px-6 py-2">
+                                    <i class="fas fa-stop mr-1"></i>Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timer 2 -->
+                    <div class="dual-timer-container">
+                        <div class="backdrop-blur-lg rounded-3xl p-6 shadow-lg border border-gray-200/30 mb-6" style="background: rgba(255, 255, 255, 0.85);">
+                            <h3 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-seedling mr-2 text-green-600"></i>
+                                Minuteur 2
+                            </h3>
+                            
+                            <!-- Cooking Selection Timer 2 -->
+                            <div class="mb-6">
+                                <label class="block text-gray-700 text-sm font-medium mb-3">Type de cuisson</label>
+                                <select id="cookingType2" class="w-full p-3 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm">
+                                    <option value="custom">⏱️ Temps personnalisé</option>
+                                    
+                                    <optgroup label="🥚 Œufs - Toutes cuissons">
+                                        <option value="egg-soft">Œuf à la coque (3 min)</option>
+                                        <option value="egg-medium">Œuf mollet (6 min)</option>
+                                        <option value="egg-hard">Œuf dur (10 min)</option>
+                                        <option value="egg-scrambled">Œufs brouillés (4-5 min)</option>
+                                        <option value="egg-poached">Œuf poché (3-4 min)</option>
+                                        <option value="egg-fried">Œuf au plat (2-3 min)</option>
+                                        <option value="omelette-plain">Omelette nature (3-4 min)</option>
+                                        <option value="omelette-filled">Omelette garnie (5-6 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍝 Pâtes - Toutes variétés">
+                                        <option value="pasta-fresh">Pâtes fraîches (2-3 min)</option>
+                                        <option value="pasta-regular">Pâtes classiques (8-10 min)</option>
+                                        <option value="pasta-whole">Pâtes complètes (12-15 min)</option>
+                                        <option value="pasta-spaghetti">Spaghetti (10-12 min)</option>
+                                        <option value="pasta-penne">Penne (11-13 min)</option>
+                                        <option value="pasta-fusilli">Fusilli (10-12 min)</option>
+                                        <option value="pasta-farfalle">Farfalle (10-12 min)</option>
+                                        <option value="pasta-tagliatelle">Tagliatelle (8-10 min)</option>
+                                        <option value="pasta-linguine">Linguine (9-11 min)</option>
+                                        <option value="pasta-ravioli">Raviolis frais (4-6 min)</option>
+                                        <option value="pasta-lasagna">Plaques lasagne (8-10 min)</option>
+                                        <option value="pasta-gnocchi">Gnocchis (2-3 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍚 Riz et Céréales">
+                                        <option value="rice-white">Riz blanc (15 min)</option>
+                                        <option value="rice-brown">Riz complet (25 min)</option>
+                                        <option value="rice-basmati">Riz basmati (12 min)</option>
+                                        <option value="rice-jasmine">Riz jasmine (15 min)</option>
+                                        <option value="rice-arborio">Riz arborio (18 min)</option>
+                                        <option value="rice-wild">Riz sauvage (45 min)</option>
+                                        <option value="rice-sticky">Riz gluant (20 min)</option>
+                                        <option value="quinoa">Quinoa (15 min)</option>
+                                        <option value="bulgur">Boulgour (12 min)</option>
+                                        <option value="couscous">Couscous (5 min)</option>
+                                        <option value="barley">Orge perlé (30 min)</option>
+                                        <option value="polenta">Polenta (15 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🥬 Légumes - Cuisson vapeur">
+                                        <option value="broccoli-steam">Brocolis vapeur (5-6 min)</option>
+                                        <option value="cauliflower-steam">Chou-fleur vapeur (6-8 min)</option>
+                                        <option value="carrots-steam">Carottes vapeur (8-10 min)</option>
+                                        <option value="green-beans-steam">Haricots verts vapeur (6-8 min)</option>
+                                        <option value="asparagus-steam">Asperges vapeur (4-6 min)</option>
+                                        <option value="spinach-steam">Épinards vapeur (2-3 min)</option>
+                                        <option value="zucchini-steam">Courgettes vapeur (4-5 min)</option>
+                                        <option value="brussels-steam">Choux de Bruxelles vapeur (8-10 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🥕 Légumes - Cuisson eau">
+                                        <option value="potatoes">Pommes de terre (20-25 min)</option>
+                                        <option value="sweet-potatoes">Patates douces (15-20 min)</option>
+                                        <option value="carrots-boiled">Carottes bouillies (10-12 min)</option>
+                                        <option value="turnips">Navets (15-18 min)</option>
+                                        <option value="beetroot">Betteraves (30-40 min)</option>
+                                        <option value="artichoke">Artichauts (25-30 min)</option>
+                                        <option value="leeks">Poireaux (12-15 min)</option>
+                                        <option value="corn">Maïs (8-10 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🥩 Viandes rouges">
+                                        <option value="steak-rare">Steak saignant (2-3 min/face)</option>
+                                        <option value="steak-medium">Steak à point (4-5 min/face)</option>
+                                        <option value="steak-well">Steak bien cuit (5-6 min/face)</option>
+                                        <option value="beef-roast">Rôti de bœuf (20 min/500g)</option>
+                                        <option value="beef-stew">Bœuf bourguignon (2h)</option>
+                                        <option value="lamb-chops">Côtelettes d'agneau (3-4 min/face)</option>
+                                        <option value="lamb-leg">Gigot d'agneau (15 min/500g)</option>
+                                        <option value="pork-chops">Côtes de porc (6-8 min/face)</option>
+                                        <option value="pork-tenderloin">Filet de porc (15-20 min)</option>
+                                        <option value="veal-escalope">Escalope de veau (3-4 min/face)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍗 Volailles">
+                                        <option value="chicken-breast">Escalope de poulet (6-8 min/face)</option>
+                                        <option value="chicken-thigh">Cuisses de poulet (25-30 min)</option>
+                                        <option value="chicken-whole">Poulet entier (20 min/500g)</option>
+                                        <option value="chicken-wings">Ailes de poulet (20-25 min)</option>
+                                        <option value="duck-breast">Magret de canard (8-10 min/face)</option>
+                                        <option value="turkey-breast">Escalope de dinde (5-7 min/face)</option>
+                                        <option value="quail">Cailles (15-20 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🐟 Poissons et fruits de mer">
+                                        <option value="fish-fillet">Filet de poisson (3-4 min/face)</option>
+                                        <option value="salmon-fillet">Filet de saumon (4-5 min/face)</option>
+                                        <option value="tuna-steak">Pavé de thon (2-3 min/face)</option>
+                                        <option value="cod-fillet">Filet de cabillaud (5-6 min/face)</option>
+                                        <option value="sea-bass">Bar entier (12-15 min/face)</option>
+                                        <option value="trout">Truite entière (8-10 min/face)</option>
+                                        <option value="shrimp">Crevettes (2-3 min)</option>
+                                        <option value="scallops">Saint-Jacques (1-2 min/face)</option>
+                                        <option value="mussels">Moules (5-8 min)</option>
+                                        <option value="lobster">Homard (8-10 min/500g)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍰 Pâtisseries et desserts">
+                                        <option value="chocolate-fondant">Fondant chocolat (12 min)</option>
+                                        <option value="creme-brulee">Crème brûlée (40 min)</option>
+                                        <option value="cake-vanilla">Gâteau vanille (25 min)</option>
+                                        <option value="chocolate-cake">Gâteau au chocolat (30 min)</option>
+                                        <option value="muffins">Muffins (18-20 min)</option>
+                                        <option value="cookies">Cookies (10-12 min)</option>
+                                        <option value="madeleines">Madeleines (8-10 min)</option>
+                                        <option value="tarte-tatin">Tarte tatin (25-30 min)</option>
+                                        <option value="soufflé">Soufflé (15-18 min)</option>
+                                        <option value="crème-caramel">Crème caramel (45 min)</option>
+                                        <option value="bread-pudding">Pain perdu (20-25 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍞 Pains et viennoiseries">
+                                        <option value="bread-baking">Pain maison (30-35 min)</option>
+                                        <option value="baguette">Baguette (20-25 min)</option>
+                                        <option value="croissants">Croissants (15-18 min)</option>
+                                        <option value="brioche">Brioche (25-30 min)</option>
+                                        <option value="focaccia">Focaccia (20-25 min)</option>
+                                        <option value="pizza-dough">Pâte à pizza (10-12 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="🍲 Plats mijotés">
+                                        <option value="pot-au-feu">Pot-au-feu (2h30)</option>
+                                        <option value="beef-stew">Bœuf bourguignon (2h)</option>
+                                        <option value="chicken-stew">Coq au vin (1h30)</option>
+                                        <option value="ratatouille">Ratatouille (45 min)</option>
+                                        <option value="cassoulet">Cassoulet (2h)</option>
+                                        <option value="bouillabaisse">Bouillabaisse (30 min)</option>
+                                        <option value="chili">Chili con carne (1h)</option>
+                                        <option value="curry">Curry (30-40 min)</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="☕ Boissons chaudes">
+                                        <option value="tea-green">Thé vert (2-3 min)</option>
+                                        <option value="tea-black">Thé noir (4-5 min)</option>
+                                        <option value="tea-herbal">Tisane (5-7 min)</option>
+                                        <option value="coffee-french">Café à la française (4 min)</option>
+                                        <option value="espresso">Espresso (25-30 sec)</option>
+                                        <option value="hot-chocolate">Chocolat chaud (5 min)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            
+                            <!-- Manual Time Setting Timer 2 -->
+                            <div class="mb-6">
+                                <label class="block text-gray-700 text-sm font-medium mb-3">Temps personnalisé</label>
+                                <div class="flex space-x-4">
+                                    <div class="flex-1">
+                                        <input type="number" id="minutes2" min="0" max="99" value="8" class="w-full p-3 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-green-400 text-center font-mono text-lg">
+                                        <label class="block text-xs text-gray-500 text-center mt-1">Minutes</label>
+                                    </div>
+                                    <div class="flex-1">
+                                        <input type="number" id="seconds2" min="0" max="59" value="0" class="w-full p-3 rounded-xl bg-white/80 text-gray-700 border border-gray-300/50 focus:outline-none focus:ring-2 focus:ring-green-400 text-center font-mono text-lg">
+                                        <label class="block text-xs text-gray-500 text-center mt-1">Secondes</label>
+                                    </div>
+                                    <button id="setTimer2" class="px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-colors">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timer Display Card 2 -->
+                        <div class="timer-card-individual backdrop-blur-lg rounded-3xl p-8 shadow-lg border border-gray-200/30 text-center" style="background: rgba(255, 255, 255, 0.85);">
+                            <div class="flex items-center justify-center mb-4">
+                                <i id="timerIcon2" class="fas fa-seedling text-green-600 text-lg mr-2"></i>
+                                <h3 id="currentCategory2" class="text-gray-600 font-medium text-sm uppercase tracking-wide">CUISSON 2</h3>
+                            </div>
+                            
+                            <div id="timerDisplay2" class="text-6xl serif-title font-bold text-gray-700 timer-glow mb-6 tracking-wide">08:00</div>
+                            
+                            <!-- Progress bar 2 -->
+                            <div class="mb-6">
+                                <div class="progress-bar-container h-3 rounded-full overflow-hidden">
+                                    <div id="progressBar2" class="progress-bar h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Controls 2 -->
+                            <div class="flex justify-center space-x-3">
+                                <button id="startBtn2" class="oval-btn bg-green-500 hover:bg-green-600 text-white border-green-400 px-6 py-2">
+                                    <i class="fas fa-play mr-1"></i>Start
+                                </button>
+                                <button id="pauseBtn2" class="oval-btn bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-400 px-6 py-2" disabled>
+                                    <i class="fas fa-pause mr-1"></i>Pause
+                                </button>
+                                <button id="resetBtn2" class="oval-btn bg-gray-500 hover:bg-gray-600 text-white border-gray-400 px-6 py-2">
+                                    <i class="fas fa-stop mr-1"></i>Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Global Controls for Dual Mode -->
+                <div class="flex justify-center space-x-6 mt-8">
+                    <button id="startAllBtn" class="oval-btn bg-blue-600 hover:bg-blue-700 text-white border-blue-500 px-8 py-3 text-lg font-bold">
+                        <i class="fas fa-play-circle mr-2"></i>Démarrer Tout
+                    </button>
+                    <button id="pauseAllBtn" class="oval-btn bg-orange-600 hover:bg-orange-700 text-white border-orange-500 px-8 py-3 text-lg font-bold">
+                        <i class="fas fa-pause-circle mr-2"></i>Pause Tout
+                    </button>
+                    <button id="resetAllBtn" class="oval-btn bg-red-600 hover:bg-red-700 text-white border-red-500 px-8 py-3 text-lg font-bold">
+                        <i class="fas fa-stop-circle mr-2"></i>Reset Tout
+                    </button>
+                </div>
+            </div>
+
+            <div id="pomodoroMode" class="timer-mode hidden">
+                <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 mb-8">
+                    <div class="text-center mb-8">
+                        <h3 class="text-white font-bold text-2xl mb-4">
+                            <i class="fas fa-brain mr-3 text-pink-400"></i>Mode Pomodoro
+                        </h3>
+                        <p class="text-white/70">Technique de productivité : 25min de travail, 5min de pause</p>
+                    </div>
+
+                    <!-- Pomodoro Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="text-center p-4 bg-white/5 rounded-xl">
+                            <div class="text-2xl font-bold text-green-400" id="pomodoroCount">0</div>
+                            <div class="text-white/70 text-sm">Pomodoros</div>
+                        </div>
+                        <div class="text-center p-4 bg-white/5 rounded-xl">
+                            <div class="text-2xl font-bold text-blue-400" id="currentCycle">Travail</div>
+                            <div class="text-white/70 text-sm">Phase actuelle</div>
+                        </div>
+                        <div class="text-center p-4 bg-white/5 rounded-xl">
+                            <div class="text-2xl font-bold text-purple-400" id="totalTime">0min</div>
+                            <div class="text-white/70 text-sm">Temps total</div>
+                        </div>
+                    </div>
+
+                    <!-- Pomodoro Timer Display -->
+                    <div class="text-center mb-8">
+                        <div class="relative inline-block mb-8">
+                            <div class="modern-clock w-72 h-72 md:w-96 md:h-96 rounded-full flex items-center justify-center relative overflow-hidden">
+                                <svg class="progress-ring absolute inset-0 w-full h-full" viewBox="0 0 384 384">
+                                    <circle cx="192" cy="192" r="180" stroke="rgba(255,255,255,0.1)" stroke-width="4" fill="transparent"/>
+                                    <circle id="pomodoroProgressCircle" class="progress-ring-circle" cx="192" cy="192" r="180" stroke="url(#pomodoroGradient)" stroke-width="6" fill="transparent" stroke-linecap="round"/>
+                                    <defs>
+                                        <linearGradient id="pomodoroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                                            <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="relative z-10 flex flex-col items-center">
+                                    <div id="pomodoroTimerDisplay" class="text-5xl md:text-7xl font-black text-white timer-glow mb-2 tracking-wider">25:00</div>
+                                    <div class="text-sm md:text-base text-white/60 font-medium tracking-wide">
+                                        <span id="pomodoroLabel">Session de travail</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pomodoro Progress Bar -->
+                        <div class="max-w-md mx-auto">
+                            <div class="progress-bar-container h-4 rounded-full overflow-hidden">
+                                <div id="pomodoroProgressBar" class="progress-bar h-full rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pomodoro Controls -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <button id="pomodoroStartBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:scale-105 flex items-center">
+                            <i class="fas fa-play mr-2"></i>Démarrer
+                        </button>
+                        <button id="pomodoroPauseBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:scale-105 flex items-center" disabled>
+                            <i class="fas fa-pause mr-2"></i>Pause
+                        </button>
+                        <button id="pomodoroSkipBtn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:scale-105 flex items-center">
+                            <i class="fas fa-forward mr-2"></i>Passer
+                        </button>
+                        <button id="pomodoroResetBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:scale-105 flex items-center">
+                            <i class="fas fa-stop mr-2"></i>Reset
+                        </button>
+                    </div>
+                    
+                    <!-- Pomodoro Ad -->
+                    <div class="mt-6">
+                        <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 text-center">
+                            <p class="text-white/60 text-xs mb-2">Optimisez votre productivité</p>
+                            <!-- AdSense Responsive -->
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                                 data-ad-slot="XXXXXXXXXX"
+                                 data-ad-format="auto"
+                                 data-full-width-responsive="true"></ins>
+                            <script>
+                                 (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multiple Timers Mode -->
+
+
+            <!-- Overtime Display (Hidden) -->
+            <div id="overtimeDisplay" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-xl shadow-2xl z-50 hidden animate-pulse">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <div>
+                        <p class="font-bold">Temps dépassé !</p>
+                        <p id="overtimeCounter" class="text-sm">+00:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Ad Section -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 text-center">
+                <p class="text-white/60 text-sm mb-4">Découvrez nos partenaires culinaires</p>
+                
+                <!-- AdSense Large Rectangle -->
+                <div class="flex justify-center mb-4">
+                    <ins class="adsbygoogle"
+                         style="display:inline-block;width:336px;height:280px"
+                         data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                         data-ad-slot="XXXXXXXXXX"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+                
+                <!-- Version responsive -->
+                <div class="md:hidden">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                         data-ad-slot="XXXXXXXXXX"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio for notifications -->
+    <audio id="timerSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmgiB0CS1/LJeSwF" type="audio/wav">
+    </audio>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 py-8">
+        <p class="font-light">&copy; 2024 Minuteur de Cuisine - Minuteur de cuisson intelligent</p>
+    </footer>
+
+    <script src="js/timer.js"></script>
+</body>
+</html>
